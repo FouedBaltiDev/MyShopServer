@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
-using MyShop.Models; // Assurez-vous d'importer les modèles appropriés
+using MyShop.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,7 +68,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthentication(); // Ajouter cette ligne
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

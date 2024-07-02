@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
-namespace MyShop.Models
+public class UserRole : IdentityUser
 {
-    public class UserRole : IdentityRole
-    {
-    }
-}
+    [Required]
+    public string? Role { get; set; }
 
+}

@@ -2,27 +2,45 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyShop.Models;
+using System;
 
 namespace MyShop.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<UserRole> // Utilisation de IdentityDbContext<UserRole> pour intégrer UserRole dans Identity
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-        // Déclaration des DbSet pour chaque modèle
-        public DbSet<User>? Users { get; set; }
+        // Déclaration des DbSet pour chaque modèle existant
+        public new DbSet<User>? Users { get; set; }
         public DbSet<Order>? Orders { get; set; }
         public DbSet<OrderItem>? OrderItems { get; set; }
         public DbSet<Product>? Products { get; set; }
         public DbSet<Cart>? Carts { get; set; }
         public DbSet<Delivery>? Deliveries { get; set; }
 
+        // Ajout de DbSet pour UserRole
+        public new DbSet<UserRole>? UserRoles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+
+            // Configuration de UserRole
+            modelBuilder.Entity<UserRole>().ToTable("UserRoles"); // Nom de la table si différent de UserRole par défaut
+            modelBuilder.Entity<UserRole>().HasKey(e => e.Id); // Clé primaire
+                                                               // Autres configurations selon les besoins
+
+            // Seeding initial des données si nécessaire
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "2", Name = "Customer", NormalizedName = "CUSTOMER" }
+            );
+
+            // Seeding des autres entités comme vous l'avez déjà configuré
+            // Exemple :
             // Seeding Users
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, UserName = "BaltiFoued", Password = "123456", Email = "fbalti@gmail.com", Role = "Admin", Address = "85 cité ferdaouis", PhoneNumber = "29201085" },
