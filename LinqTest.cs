@@ -6,8 +6,10 @@ namespace MyShop;
 // Public, Private, Protected => c'est un (acces modifier) de la classe ou encapsulation (principe dans l'orienté objet)
 // Bon réflexe du dev c'est de mettre les props ou fields en private pour éviter une utilisation imprévu par une autre classe
 
-// acces modifier par défaut du type class en c# => internal Accessibility Level
-public class LinqTest
+// Acces modifier par défaut du type class en c# => internal Accessibility Level
+
+// Classe contient (fields, properties, cosntructors, methods)
+public class Person
 {
     // Commandes VS
     // prop => création property 
@@ -17,10 +19,24 @@ public class LinqTest
     // Field ou Champ dans la classe
     // Injection de dépendance => injecter service ou la classe ApplicationDbContext dans le code client pour le consommer
     // Readonly sur les fields injectés dans le constructeur de la classe (services) => bonne pratique clean code
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context; // field
 
-    public string Nom { get; set; }
-    public string Prenom { get; set; }
+    public string Nom { get; set; } // property
+    //public string Prenom { get; set; }
+
+    //private string Prenom;
+
+    // On utilise propfull + Tab lorsque je veux faire une validation sur le champ
+    // Field comme _context en c# ne contient pas de validation
+    public string Prenom
+    {
+        get { return Prenom; }
+        set
+        {
+            if (value == "Bassem")
+                Prenom = value;
+        }
+    }
 
     // enum c'est un value type en c#
     enum MyEnum
@@ -30,19 +46,20 @@ public class LinqTest
     }
 
     // Classe accepte plusieurs constructeurs
-    public LinqTest(string nom, string prenom)
+    public Person(string nom, string prenom)
     {
         Nom = nom;
         Prenom = prenom;
     }
 
-    public LinqTest(ApplicationDbContext ctx)
+    public Person(ApplicationDbContext ctx)
     {
         _context = ctx;
     }
 
     private void ObjectMethod(string aa) // signature de méthode = entête
     {
+
         // c# strongly typed
         // Il t'empêche par exemple d'assigner un int dans une variable de type string
         // string str = 9; ==> Compile Time Error (avant l'exécution du programme) Runtime error (l'inverse après l'exécution)
@@ -84,9 +101,16 @@ public class LinqTest
     // Ici dans la signature c'est fait le cast implicit automatique de int passé (versionTestObject) à object (numberConvertedToObject)
     private void MethodeCastImplicit(object numberConvertedToObject)
     {
+        Animal chien_1 = new Chien(); // polymorphism => polymorphie => plusieurs formes => chien ou chat
+        Chien chien_2 = new Chien();
+
+        var aa = chien_2 as Animal; // cast to animal classe mère
+        var aabb = chien_1 as Chien; // cast to chien
+
+        var test = chien_2 is Animal;
+
 
     }
-
 
 
 
@@ -97,15 +121,22 @@ public class LinqTest
 // Classe abstraite Animal
 // Dans Chat et Chien on a fait la spécialisation de la méthode abstract FaireDuBruit (méthode modèle ou 9aleb) avec le keyword override (polymorphisme)
 // Principe de OOP polymorphism il utilise déjà l'héritage => pour faire override dans FaireDuBruit on a ajouté avant l'héritage (: Animal)
+// On a fait plusieurs formes de la méthode ( FaireDuBruit)  selon la nature de classe héritière  (chat ou chien) pour donner plusieurs formes ou comportements ou versions
 public abstract class Animal
 {
     // Méthode abstraite à implémenter par les classes dérivées
     public abstract string FaireDuBruit();
+
+    // public abstract int Methode_In_Parent_Class_Animal();
+
+    //public abstract string Marcher();
 }
 
 // Classe Chat qui hérite de Animal
 public class Chat : Animal
 {
+    // override + espace dans classe fille => affichage méthodes dispo dans les classes parents  => Methode_In_Parent_Class_Animal
+
     // Implémentation de la méthode FaireDuBruit
     public override string FaireDuBruit()
     {
@@ -120,6 +151,41 @@ public class Chien : Animal
     public override string FaireDuBruit()
     {
         return "Ouaf";
+    }
+}
+
+static class MyClassStatic
+{
+    public static string Methode_Static()
+    {
+        return "Ouaf";
+    }
+}
+
+// Polymorphism => deux types => overriding (override) et overloading (même signature de méthode avec différents params) => les deux => plusieurs formes
+
+// Overloading
+class Animal_Overloading
+{
+    // Méthode sans paramètres
+    public void MakeSound()
+    {
+        Console.WriteLine("L'animal fait un bruit.");
+    }
+
+    // Méthode avec un paramètre de type string
+    public void MakeSound(string sound)
+    {
+        Console.WriteLine($"L'animal fait un bruit: {sound}");
+    }
+
+    // Méthode avec deux paramètres
+    public void MakeSound(string sound, int times)
+    {
+        for (int i = 0; i < times; i++)
+        {
+            Console.WriteLine($"L'animal fait un bruit: {sound}");
+        }
     }
 }
 

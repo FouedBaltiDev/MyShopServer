@@ -14,10 +14,15 @@ internal class Program
         // , pour voir les properties de constructeur proposés
         // myClasse c'est une copie, adresse mémoire ou référence mémoire d'un objet qui contient BALTI FOUED
         // var => ca implicit type (générique elle prend auto le type de texte après le = )
-        var myClasse1 = new LinqTest("BALTI", "FOUED");
+        var myClasse1 = new Person("BALTI", "FOUED");
 
         // Explicit type (tu connais le type de résultat qui est LinqTest )
-        LinqTest myClasse2 = new("BALTI", "BASSEM");
+        Person myClasse2 = new("BALTI", "BASSEM");
+
+        // Static
+        MyClassStatic.Methode_Static();
+
+
 
         var builder = WebApplication.CreateBuilder(args);
 
