@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyShop.Models;
-using System;
 
 namespace MyShop.Data
 {
@@ -27,11 +26,20 @@ namespace MyShop.Data
         {
             base.OnModelCreating(modelBuilder);
 
-
             // Configuration de UserRole
+            // à virer
             modelBuilder.Entity<UserRole>().ToTable("UserRoles"); // Nom de la table si différent de UserRole par défaut
             modelBuilder.Entity<UserRole>().HasKey(e => e.Id); // Clé primaire
                                                                // Autres configurations selon les besoins
+
+            // Configuration de AspNetUsers
+            // Lorsque vous utilisez Entity Framework avec ASP.NET Identity,
+            // IdentityUser est mappée à la table AspNetUsers par convention.
+            // Renommer la table UserRole to AspNetUsers
+            modelBuilder.Entity<IdentityUser>(entity =>
+            {
+                entity.ToTable(name: "AspNetUsers");
+            });
 
             // Seeding initial des données si nécessaire
             modelBuilder.Entity<IdentityRole>().HasData(

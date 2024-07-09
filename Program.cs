@@ -36,7 +36,7 @@ internal class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         // Configure Identity
-        builder.Services.AddIdentity<UserRole, IdentityRole>(options =>
+        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequiredLength = 6;

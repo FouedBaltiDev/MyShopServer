@@ -12,8 +12,8 @@ using MyShop.Data;
 namespace MyShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240702163718_UpdateUserRole")]
-    partial class UpdateUserRole
+    [Migration("20240709075833_InitialIdentitySchema")]
+    partial class InitialIdentitySchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,7 +81,7 @@ namespace MyShop.Migrations
                         {
                             Id = 1,
                             Address = "85 cité ferdaouis",
-                            DeliveryDate = new DateTime(2024, 7, 4, 17, 37, 16, 943, DateTimeKind.Local).AddTicks(998),
+                            DeliveryDate = new DateTime(2024, 7, 11, 9, 58, 33, 511, DateTimeKind.Local).AddTicks(402),
                             OrderId = 1,
                             Status = "Shipped"
                         },
@@ -89,7 +89,7 @@ namespace MyShop.Migrations
                         {
                             Id = 2,
                             Address = "13 cité santé agba",
-                            DeliveryDate = new DateTime(2024, 7, 3, 17, 37, 16, 943, DateTimeKind.Local).AddTicks(1010),
+                            DeliveryDate = new DateTime(2024, 7, 10, 9, 58, 33, 511, DateTimeKind.Local).AddTicks(405),
                             OrderId = 2,
                             Status = "Delivered"
                         });
@@ -125,14 +125,14 @@ namespace MyShop.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "a0a2c2b8-a514-44bf-bfbf-2bb3873bc4b7",
+                            ConcurrencyStamp = "f846be76-d382-4ffe-8e65-8b6a403c0d20",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "5f5cb51a-049b-4bc7-ac3a-826c706a3ec9",
+                            ConcurrencyStamp = "c28b84ce-c6fe-4fe8-8290-544e277436cd",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -161,6 +161,58 @@ namespace MyShop.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -272,7 +324,7 @@ namespace MyShop.Migrations
                         new
                         {
                             Id = 1,
-                            OrderDate = new DateTime(2024, 7, 2, 17, 37, 16, 943, DateTimeKind.Local).AddTicks(898),
+                            OrderDate = new DateTime(2024, 7, 9, 9, 58, 33, 511, DateTimeKind.Local).AddTicks(324),
                             Status = "Pending",
                             TotalAmount = 21.98m,
                             UserId = 1
@@ -280,7 +332,7 @@ namespace MyShop.Migrations
                         new
                         {
                             Id = 2,
-                            OrderDate = new DateTime(2024, 7, 2, 17, 37, 16, 943, DateTimeKind.Local).AddTicks(915),
+                            OrderDate = new DateTime(2024, 7, 9, 9, 58, 33, 511, DateTimeKind.Local).AddTicks(365),
                             Status = "Completed",
                             TotalAmount = 20.99m,
                             UserId = 2

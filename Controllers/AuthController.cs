@@ -1,33 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using MyShop.Models;
-using System;
-using System.Collections.Generic;
+using MyShop.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<UserRole> _userManager;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly ApplicationDbContext _dbContext;
 
-    public AuthController(UserManager<UserRole> userManager, IConfiguration configuration)
+    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _dbContext = dbContext;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
+        // test get list Cart done
+        // à virer le mettre dans les services
+        // Linq query
+        var test = _dbContext.Carts.Select(cart => cart.UserId).ToList();
+
+        // var rrr = _dbContext.AspNetuser
+
         var user = await _userManager.FindByNameAsync(model.UserName);
-        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+
+        var isCorrectPassword = await _userManager.CheckPasswordAsync(user, model.Password);
+
+        if (user != null && model.Password == user.PasswordHash)
         {
             // Récupérer le rôle de l'utilisateur
             var roles = await _userManager.GetRolesAsync(user);
@@ -35,11 +43,11 @@ public class AuthController : ControllerBase
 
             // Créer les revendications pour le token JWT
             var authClaims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-            new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-            new Claim(ClaimTypes.Role, role ?? string.Empty)  // Ajouter le rôle ici
-        };
+            {
+                new(ClaimTypes.Name, user.UserName ?? string.Empty),
+                new(ClaimTypes.Email, user.Email ?? string.Empty),
+                new(ClaimTypes.Role, role ?? string.Empty)  // Ajouter le rôle ici
+            };
 
             // Clé de signature pour JWT
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
