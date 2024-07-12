@@ -165,27 +165,75 @@ static class MyClassStatic
 // Polymorphism => deux types => overriding (override) et overloading (même signature de méthode avec différents params) => les deux => plusieurs formes
 
 // Overloading
-class Animal_Overloading
+class Animal_Overloading : IMyInterface
 {
     // Méthode sans paramètres
     public void MakeSound()
     {
+        // IMyInterface? gg = new IMyInterface(); // error compile time instanciation abstract ou interface interdit
+        IMyInterface? gg = new Animal_Overloading(); // polymorphism
+
+        var tab = new int[5] { 1, 2, 3, 5, 9 };
+
+        // IEnumerable => backbone Linq
+        // Héarchie de classes Linq
+        ICollection<int> list1 = new List<int>();
+        IEnumerable<string> list2 = new List<string>();
+        List<string> list3 = new List<string>();
+
+        // List<dynamic> list3 = new List<dynamic>(); => dynamic type generic
+
+        // list3.Add(3); error list strongly typed
+
+        // Ienumerable hérite d'object donc elle peut utiliser equals
+        list2.Equals(list1);
+
+
         Console.WriteLine("L'animal fait un bruit.");
     }
 
     // Méthode avec un paramètre de type string
+    // IEnumerable<string> list2 = new List<string>();
     public void MakeSound(string sound)
     {
         Console.WriteLine($"L'animal fait un bruit: {sound}");
     }
 
+    // Liskov substitution principle 
+    public IEnumerable<string> Flexible()
+    {
+        return new List<string>();
+    }
+
     // Méthode avec deux paramètres
     public void MakeSound(string sound, int times)
     {
+
         for (int i = 0; i < times; i++)
         {
             Console.WriteLine($"L'animal fait un bruit: {sound}");
         }
     }
+
+    public void MakeSoundAnimal()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+// Interface => contrat pour les classes filles qui hérite cette interface ils doivent implémenter les méthodes qui existe en elle
+// Avantage aussi de l'interface => Multi héritage qui n'est pas possible avec les classes classiques en c#
+interface IMyInterface
+{
+    // IList<string> list = new List<string>();  => dénomination commence tjr par I
+    // public interface IList<T> : ICollection<T>, IEnumerable<T>, IEnumerable  => héritage plusieurs interfaces
+
+    public void MakeSoundAnimal();
+
+    public void MakeSoundAnimalAA()
+    {
+        Console.WriteLine("aa");
+    }
+
 }
 
