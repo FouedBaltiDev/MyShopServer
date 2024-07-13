@@ -237,3 +237,62 @@ interface IMyInterface
 
 }
 
+class LinqTuto
+{
+    public readonly ApplicationDbContext _context;
+    public LinqTuto(ApplicationDbContext ctx)
+    {
+        _context = ctx;
+    }
+
+    // Method Syntax
+    // Query Synatx
+
+    public void LinqQueries()
+    {
+        // https://stackoverflow.com/questions/26137511/see-the-type-of-a-var-in-visual-studio
+        // Afficher type des variables implicit en c# => Tools > Options > Text Editor > C# > Advanced > Display inline type hints
+        var result = _context.Orders.Where(o => o.TotalAmount > 0).ToList();
+        var selectedDatesOrders = _context.Orders.Select(o => o.OrderDate).ToList();
+
+        var myList = Enumerable.Range(1, 1000);
+
+        // Method syntax
+        var numbersPairsMethod = myList.Where(n => n % 2 == 0);
+        var isEmptyList = myList.Any();
+
+        // Appel normal sans méthode d'extension
+        // Where(params)
+
+        // Query syntax
+        var numbersPairsQuery = from n in myList
+                                where n % 2 == 0
+                                select n;
+
+
+        // Consommation de notre méthode d'extension
+        var gg = "bbbbbb";
+
+        // Appel méthode d'extension
+        var newString = gg.MethodExtensionTuto(5);
+
+        // Appel méthode normal
+        var methodDefault = MyClassExtension.MethodDefault("aaa");
+    }
+}
+
+static class MyClassExtension
+{
+    public static string MethodExtensionTuto(this string myString, int n)
+    {
+        // Method extension c# à faire
+        return myString.Replace("b", "s");
+    }
+
+    public static string MethodDefault(string myString)
+    {
+        // Method extension c# à faire
+        return myString.Replace("b", "s");
+    }
+}
+
