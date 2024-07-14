@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
+using MyShop.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,17 +14,22 @@ public class AuthController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly ApplicationDbContext _dbContext;
+    private readonly IEmailSender _emailSender;
 
-    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext)
+    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, IEmailSender emailSender)
     {
         _userManager = userManager;
         _configuration = configuration;
         _dbContext = dbContext;
+        _emailSender = emailSender;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
+
+        await _emailSender.SendEmailAsync("bacembalti3@gmail.com", "Test Subject", "This is a test email.");
+
         // test get list Cart done
         // à virer le mettre dans les services
         // Linq query
