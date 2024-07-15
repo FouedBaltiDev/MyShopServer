@@ -12,30 +12,48 @@ using System.Text;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly ApplicationDbContext _dbContext;
     private readonly IEmailSender _emailSender;
 
-    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, IEmailSender emailSender)
+    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _configuration = configuration;
         _dbContext = dbContext;
         _emailSender = emailSender;
+        _roleManager = roleManager;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
 
-        await _emailSender.SendEmailAsync("bacembalti3@gmail.com", "Test Subject", "This is a test email.");
+        //await _emailSender.SendEmailAsync("bacembalti3@gmail.com", "Test Subject", "This is a test email.");
 
         // test get list Cart done
         // à virer le mettre dans les services
         // Linq query
         var test = _dbContext.Carts.Select(cart => cart.UserId).ToList();
 
-        // var rrr = _dbContext.AspNetuser
+
+        // Jointure Order => OrderItems
+        // Query synatxe
+        var query = (from order in _dbContext.Orders
+                     join orderItem in _dbContext.OrderItems on order.Id equals orderItem.OrderId
+                     select new
+                     {
+                         Id_orderTable = order.Id,
+                         Id_orderItemsTable = orderItem.Id,
+                         UnitPrice = orderItem.UnitPrice,
+                     })
+                     .ToList();
+
+        // _userManager et _roleManager deux Classes fourni par le package pour récupérer les users ou roles de la base
+        var users = _userManager.Users.ToList();
+        var roless = _roleManager.Roles.ToList();
+
 
         var user = await _userManager.FindByNameAsync(model.UserName);
 

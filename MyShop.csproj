@@ -30,6 +30,5 @@
 
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
-	  <Folder Include="Formation\" />
 	</ItemGroup>
 </Project>

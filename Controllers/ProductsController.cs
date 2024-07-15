@@ -78,20 +78,6 @@ namespace MyShop.Controllers
             return NoContent();
         }
 
-
-
-        // Add rows in table products
-        // New query => Execute in SSMS with F5
-
-        // INSERT INTO Products (Name, Description, Price, Stock)
-        // VALUES
-        //('Produit A', 'Description du produit A', 19.99, 100),
-        //('Produit B', 'Description du produit B', 29.99, 50),
-        //('Produit C', 'Description du produit C', 39.99, 20),
-        //('Produit D', 'Description du produit D', 49.99, 75),
-        //('Produit E', 'Description du produit E', 59.99, 10);
-
-
         // New Methods => Consommation du service Product => ici le code dans le controlleur on l'appelle code client parceque il consomme des services 
         // type de retour de la méthode (async Task<IActionResult>) car o nretourne le résultat d'un appel asynchrone qui est (GetAllProductsAsync)
         [HttpGet("GetAllProducts")]

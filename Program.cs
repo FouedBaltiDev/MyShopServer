@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MyShop;
 using MyShop.Data;
 using MyShop.Services;
 using System.Net;
@@ -13,18 +12,6 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        // Instanciation d'objet en c# 
-        // , pour voir les properties de constructeur proposés
-        // myClasse c'est une copie, adresse mémoire ou référence mémoire d'un objet qui contient BALTI FOUED
-        // var => ca implicit type (générique elle prend auto le type de texte après le = )
-        var myClasse1 = new Person("BALTI", "FOUED");
-
-        // Explicit type (tu connais le type de résultat qui est LinqTest )
-        Person myClasse2 = new("BALTI", "BASSEM");
-
-        // Static
-        MyClassStatic.Methode_Static();
-
 
         var builder = WebApplication.CreateBuilder(args);
 
