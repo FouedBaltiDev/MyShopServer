@@ -20,8 +20,6 @@ namespace MyShop.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             // Configuration de AspNetUsers
             // Lorsque vous utilisez Entity Framework avec ASP.NET Identity,
             // IdentityUser est mappée à la table AspNetUsers par convention.
@@ -31,11 +29,21 @@ namespace MyShop.Data
                 entity.ToTable(name: "AspNetUsers");
             });
 
+            // FK
+            modelBuilder.Entity<Product>()
+           .HasMany(p => p.OrderItems)
+           .WithOne(p => p.Product)
+           .HasForeignKey(o => o.ProductId)
+           .IsRequired(true);
+
             // Seeding initial des données si nécessaire
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
                 new IdentityRole { Id = "2", Name = "Customer", NormalizedName = "CUSTOMER" }
             );
+
+            base.OnModelCreating(modelBuilder);
+
         }
     }
 }

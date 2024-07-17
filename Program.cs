@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
 using MyShop.Services;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 
 internal class Program
@@ -20,15 +18,15 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         // Configuration du SmtpClient (pour l'exemple)
-        var smtpClient = new SmtpClient("smtp.gmail.com")
-        {
-            Port = 587,
-            Credentials = new NetworkCredential("username", "password"),
-            EnableSsl = true,
-        };
-        // Enregistrement du SmtpClient et de l'EmailSender
-        builder.Services.AddSingleton(smtpClient);
-        builder.Services.AddScoped<IEmailSender>(provider => new EmailSender(smtpClient, "bacembalti3@gmail.com"));
+        //var smtpClient = new SmtpClient("smtp.gmail.com")
+        //{
+        //    Port = 587,
+        //    Credentials = new NetworkCredential("username", "password"),
+        //    EnableSsl = true,
+        //};
+        //// Enregistrement du SmtpClient et de l'EmailSender
+        //builder.Services.AddSingleton(smtpClient);
+        //builder.Services.AddScoped<IEmailSender>(provider => new EmailSender(smtpClient, "bacembalti3@gmail.com"));
 
         // Ajouter le service IProductService
         builder.Services.AddScoped<IProductService, ProductService>();

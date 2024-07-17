@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
-using MyShop.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,14 +14,12 @@ public class AuthController : ControllerBase
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly ApplicationDbContext _dbContext;
-    private readonly IEmailSender _emailSender;
 
-    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
+    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _configuration = configuration;
         _dbContext = dbContext;
-        _emailSender = emailSender;
         _roleManager = roleManager;
     }
 
