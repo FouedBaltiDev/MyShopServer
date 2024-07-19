@@ -1,6 +1,6 @@
 ﻿namespace MyShop.Services;
 
-public class DeliveryService
+public class DeliveryService : IDeliveryService
 {
     private readonly List<Delivery> deliveries;
 

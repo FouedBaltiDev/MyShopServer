@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
                      {
                          Id_orderTable = order.Id,
                          Id_orderItemsTable = orderItem.Id,
-                         UnitPrice = orderItem.UnitPrice,
+                         orderItem.UnitPrice,
                      })
                      .ToList();
 

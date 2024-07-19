@@ -10,12 +10,12 @@ public class CartService : ICartService
         carts = new List<Cart>();
     }
 
-    public Cart GetCartByUserId(int userId)
+    public Cart GetCartByUserId(string userId)
     {
         return carts.FirstOrDefault(cart => cart.UserId == userId) ?? new Cart { UserId = userId, CartItems = new List<OrderItem>() };
     }
 
-    public void AddItemToCart(int userId, OrderItem item)
+    public void AddItemToCart(string userId, OrderItem item)
     {
         var cart = GetCartByUserId(userId);
         if (cart.CartItems == null)
@@ -29,7 +29,7 @@ public class CartService : ICartService
         }
     }
 
-    public void RemoveItemFromCart(int userId, int itemId)
+    public void RemoveItemFromCart(string userId, int itemId)
     {
         var cart = GetCartByUserId(userId);
         if (cart.CartItems != null)
@@ -42,7 +42,7 @@ public class CartService : ICartService
         }
     }
 
-    public void ClearCart(int userId)
+    public void ClearCart(string userId)
     {
         var cart = GetCartByUserId(userId);
         if (cart.CartItems != null)

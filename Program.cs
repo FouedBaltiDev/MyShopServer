@@ -28,8 +28,12 @@ internal class Program
         //builder.Services.AddSingleton(smtpClient);
         //builder.Services.AddScoped<IEmailSender>(provider => new EmailSender(smtpClient, "bacembalti3@gmail.com"));
 
-        // Ajouter le service IProductService
+        // Ajouter les services
         builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+        builder.Services.AddScoped<ICartService, CartService>();
+        builder.Services.AddScoped<IDeliveryService, DeliveryService>();
 
         // Configure DbContext with SQL Server
         builder.Services.AddDbContext<ApplicationDbContext>(options =>

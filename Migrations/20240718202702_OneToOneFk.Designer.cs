@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop.Data;
 
@@ -11,9 +12,10 @@ using MyShop.Data;
 namespace MyShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240718202702_OneToOneFk")]
+    partial class OneToOneFk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +70,9 @@ namespace MyShop.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Deliveries");
@@ -103,14 +108,14 @@ namespace MyShop.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "13a2ac4d-5160-472b-9521-6e41d7974b07",
+                            ConcurrencyStamp = "d9d4c809-9365-42fa-85a7-9ab3725b0c7b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "086f6801-06c7-43a3-87ad-2ff31a6a92ab",
+                            ConcurrencyStamp = "4ea3ae99-53cc-463b-b23e-c017e5b38c10",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -402,11 +407,19 @@ namespace MyShop.Migrations
 
             modelBuilder.Entity("Delivery", b =>
                 {
+                    b.HasOne("Order", "Order")
+                        .WithOne("Delivery")
+                        .HasForeignKey("Delivery", "OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("MyShop.Models.User", "User")
                         .WithMany("Deliveries")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("User");
                 });
@@ -503,6 +516,8 @@ namespace MyShop.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
+                    b.Navigation("Delivery");
+
                     b.Navigation("OrderItems");
                 });
 

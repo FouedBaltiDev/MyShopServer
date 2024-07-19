@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyShop.Data;
 
@@ -11,9 +12,10 @@ using MyShop.Data;
 namespace MyShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240718161432_DeliveryUserForeignKey")]
+    partial class DeliveryUserForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,14 +32,10 @@ namespace MyShop.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -103,14 +101,14 @@ namespace MyShop.Migrations
                         new
                         {
                             Id = "1",
-                            ConcurrencyStamp = "13a2ac4d-5160-472b-9521-6e41d7974b07",
+                            ConcurrencyStamp = "54af1b7a-1b99-4850-bf3f-eeaca94fac3d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "2",
-                            ConcurrencyStamp = "086f6801-06c7-43a3-87ad-2ff31a6a92ab",
+                            ConcurrencyStamp = "3a9c1454-34f9-4a6c-a9de-555761c5f18e",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         });
@@ -389,17 +387,6 @@ namespace MyShop.Migrations
                     b.HasDiscriminator().HasValue("User");
                 });
 
-            modelBuilder.Entity("Cart", b =>
-                {
-                    b.HasOne("MyShop.Models.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("Cart", "UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Delivery", b =>
                 {
                     b.HasOne("MyShop.Models.User", "User")
@@ -513,8 +500,6 @@ namespace MyShop.Migrations
 
             modelBuilder.Entity("MyShop.Models.User", b =>
                 {
-                    b.Navigation("Cart");
-
                     b.Navigation("Deliveries");
 
                     b.Navigation("Orders");
