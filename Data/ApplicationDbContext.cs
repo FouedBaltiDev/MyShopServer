@@ -5,7 +5,7 @@ using MyShop.Models;
 
 namespace MyShop.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -25,7 +25,7 @@ namespace MyShop.Data
 
             // Configuration de AspNetUsers
             // Lorsque vous utilisez Entity Framework avec ASP.NET Identity,
-            // IdentityUser est mappée à la table AspNetUsers par convention.
+            // User est mappée à la table AspNetUsers par convention.
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable(name: "AspNetUsers");
@@ -68,16 +68,16 @@ namespace MyShop.Data
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // One-to-One relationship between Order and Delivery
-            //modelBuilder.Entity<Order>()
-            //    .HasOne(d => d.Delivery)
-            //    .WithOne(d => d.Order)
-            //    .HasForeignKey<Delivery>(d => d.OrderId)
-            //    .IsRequired()
-            //    .OnDelete(DeleteBehavior.NoAction);  // No action on delete
+            // One - to - One relationship between Order and Delivery
+            modelBuilder.Entity<Order>()
+                .HasOne(d => d.Delivery)
+                .WithOne(d => d.Order)
+                .HasForeignKey<Delivery>(d => d.OrderId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);  // No action on delete
 
 
-            // Virer la table AspNetRoles et essayer le seed
+            // Virer les datas la table AspNetRoles et essayer le seed
             // Seeding initial des données si nécessaire
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },

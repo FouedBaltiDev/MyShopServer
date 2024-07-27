@@ -1,99 +1,99 @@
 ﻿namespace MyShop.Controllers;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyShop.Models;
-using System.Collections.Generic;
+using MyShop.Services;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly UserManager<User> _userManager;
+    private readonly IUserService _userService;
 
-    public UsersController(UserManager<User> userManager)
+    public UsersController(IUserService userService)
     {
-        _userManager = userManager;
+        _userService = userService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUserById(string id)
-    {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
-        return Ok(user);
-    }
-
+    // GET: api/User
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers()
     {
-        var users = _userManager.Users;
-        return Ok(users);
+        var users = await _userService.GetAllUsersAsync();
+        return Ok(users); // Return all users as JSON
     }
 
-    [HttpPost]
-    public async Task<ActionResult> CreateUser(User user, string password)
+    // GET: api/User/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(string id)
     {
-        var result = await _userManager.CreateAsync(user, password);
-        if (result.Succeeded)
-        {
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
-        }
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-        return BadRequest(ModelState);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(string id, User updatedUser)
-    {
-        var user = await _userManager.FindByIdAsync(id);
+        var user = await _userService.GetUserByIdAsync(id);
         if (user == null)
         {
-            return NotFound();
+            return NotFound(); // Return 404 if user is not found
         }
-
-        user.Email = updatedUser.Email;
-        user.UserName = updatedUser.UserName;
-        // Mettre à jour d'autres propriétés nécessaires
-
-        var result = await _userManager.UpdateAsync(user);
-        if (result.Succeeded)
-        {
-            return NoContent();
-        }
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-        return BadRequest(ModelState);
+        return Ok(user); // Return the user as JSON
     }
 
+    // POST: api/User
+    [HttpPost]
+    public async Task<IActionResult> CreateUser([FromBody] User user, [FromQuery] string password)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState); // Return 400 if model state is invalid
+        }
+
+        try
+        {
+            await _userService.CreateUserAsync(user, password);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user); // Return 201 Created
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message }); // Return 400 with error message
+        }
+    }
+
+    // PUT: api/User/{id}
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(string id, [FromBody] User user)
+    {
+        if (id != user.Id)
+        {
+            return BadRequest(); // Return 400 if ID mismatch
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState); // Return 400 if model state is invalid
+        }
+
+        try
+        {
+            await _userService.UpdateUserAsync(user);
+            return NoContent(); // Return 204 No Content if update is successful
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message }); // Return 400 with error message
+        }
+    }
+
+    // DELETE: api/User/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(string id)
     {
-        var user = await _userManager.FindByIdAsync(id);
-        if (user == null)
+        try
         {
-            return NotFound();
+            await _userService.DeleteUserAsync(id);
+            return NoContent(); // Return 204 No Content if deletion is successful
         }
-
-        var result = await _userManager.DeleteAsync(user);
-        if (result.Succeeded)
+        catch (Exception ex)
         {
-            return NoContent();
+            return BadRequest(new { message = ex.Message }); // Return 400 with error message
         }
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-        return BadRequest(ModelState);
     }
 }
 

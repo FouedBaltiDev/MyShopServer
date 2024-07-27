@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
+using MyShop.Models;
 using MyShop.Services;
 using System.Text;
 
@@ -17,16 +18,7 @@ internal class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        // Configuration du SmtpClient (pour l'exemple)
-        //var smtpClient = new SmtpClient("smtp.gmail.com")
-        //{
-        //    Port = 587,
-        //    Credentials = new NetworkCredential("username", "password"),
-        //    EnableSsl = true,
-        //};
-        //// Enregistrement du SmtpClient et de l'EmailSender
-        //builder.Services.AddSingleton(smtpClient);
-        //builder.Services.AddScoped<IEmailSender>(provider => new EmailSender(smtpClient, "bacembalti3@gmail.com"));
+
 
         // Ajouter les services
         builder.Services.AddScoped<IProductService, ProductService>();
@@ -34,13 +26,14 @@ internal class Program
         builder.Services.AddScoped<IOrderItemService, OrderItemService>();
         builder.Services.AddScoped<ICartService, CartService>();
         builder.Services.AddScoped<IDeliveryService, DeliveryService>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
         // Configure DbContext with SQL Server
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         // Configure Identity
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<User, IdentityRole>(options =>
         {
             options.Password.RequireDigit = false;
             options.Password.RequiredLength = 6;
