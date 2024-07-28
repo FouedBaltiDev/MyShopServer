@@ -49,7 +49,7 @@ namespace MyShop.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Foreign key relationship (User => Order)
+            // Foreign key relationship (User => Delivery)
             modelBuilder.Entity<Delivery>(entity =>
             {
                 entity.HasOne(d => d.User)
@@ -75,6 +75,16 @@ namespace MyShop.Data
                 .HasForeignKey<Delivery>(d => d.OrderId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);  // No action on delete
+
+            // One-to-Many relationship between Order and OrderItem
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.HasOne(oi => oi.Order)
+                      .WithMany(o => o.OrderItems)
+                      .HasForeignKey(oi => oi.OrderId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
 
             // Virer les datas la table AspNetRoles et essayer le seed
