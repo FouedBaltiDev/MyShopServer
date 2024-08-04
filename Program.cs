@@ -20,13 +20,29 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
 
-        // Ajouter les services
+        // Add the CORS policy
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAngularOrigins",
+                builder => builder
+                    .WithOrigins("http://localhost:4200") // URL frontend Angular
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+        });
+
+
+        // Add services
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IOrderItemService, OrderItemService>();
         builder.Services.AddScoped<ICartService, CartService>();
         builder.Services.AddScoped<IDeliveryService, DeliveryService>();
         builder.Services.AddScoped<IUserService, UserService>();
+
+
+
+
+
 
         // Configure DbContext with SQL Server
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -71,9 +87,12 @@ internal class Program
             options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
         });
 
-        var app = builder.Build();
+
 
         // Configure the HTTP request pipeline.
+
+        var app = builder.Build();
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -83,6 +102,10 @@ internal class Program
 
         app.UseHttpsRedirection();
         app.UseRouting();
+
+        // Apply CORS Policy
+        app.UseCors("AllowAngularOrigins");
+
         app.UseAuthentication();
         app.UseAuthorization();
 
