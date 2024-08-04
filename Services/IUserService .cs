@@ -11,5 +11,6 @@ public interface IUserService
     Task UpdateUserAsync(User user);
     Task DeleteUserAsync(string userId);
     Task<bool> CheckPasswordAsync(User user, string password);
+    bool IsValidEmail(string email);
 }
 

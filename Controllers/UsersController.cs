@@ -46,9 +46,15 @@
                 return BadRequest(ModelState); // Return 400 if model state is invalid
             }
 
-            if (registrationDto.Password == null)
+            if (string.IsNullOrEmpty(registrationDto.Password))
             {
                 return BadRequest(new { message = "Password is required" }); // Return 400 if password is null
+            }
+
+            // en c# les string qui commence avec dollar $ on appelle ce syntax => string interpolation (mix string et variables)
+            if (!_userService.IsValidEmail(registrationDto.Email))
+            {
+                return BadRequest(new { message = $"Email address '{registrationDto.Email}' is invalid" });
             }
 
             try

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MyShop.Models;
+using System.Net.Mail;
 
 namespace MyShop.Services;
 
@@ -63,6 +64,30 @@ public class UserService : IUserService
     public async Task<bool> CheckPasswordAsync(User user, string password)
     {
         return await _userManager.CheckPasswordAsync(user, password);
+    }
+
+    public bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Validation de la syntaxe
+            var mailAddress = new MailAddress(email);
+            if (mailAddress.Address != email)
+            {
+                return false;
+            }
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
 
