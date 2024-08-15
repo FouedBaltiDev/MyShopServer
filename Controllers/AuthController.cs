@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MyShop.Data;
+using MyShop.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -10,17 +11,19 @@ using System.Text;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IConfiguration _configuration;
     private readonly ApplicationDbContext _dbContext;
+    private readonly IPasswordHasher<User> _passwordHasher;
 
-    public AuthController(UserManager<IdentityUser> userManager, IConfiguration configuration, ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager)
+    public AuthController(UserManager<User> userManager, IConfiguration configuration, ApplicationDbContext dbContext, RoleManager<IdentityRole> roleManager, IPasswordHasher<User> passwordHasher)
     {
         _userManager = userManager;
         _configuration = configuration;
         _dbContext = dbContext;
         _roleManager = roleManager;
+        _passwordHasher = passwordHasher;
     }
 
     [HttpPost("login")]
@@ -54,9 +57,12 @@ public class AuthController : ControllerBase
 
         var user = await _userManager.FindByNameAsync(model.UserName);
 
-        var isCorrectPassword = await _userManager.CheckPasswordAsync(user, model.Password);
+        //var isCorrectPassword = await _userManager.CheckPasswordAsync(user, model.Password);
 
-        if (user != null && model.Password == user.PasswordHash)
+        // Vérifier le mot de passe avec le hachage stocké
+        var isCorrectPassword = (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password)) == PasswordVerificationResult.Success;
+
+        if (user != null && isCorrectPassword)
         {
             // Récupérer le rôle de l'utilisateur
             var roles = await _userManager.GetRolesAsync(user);

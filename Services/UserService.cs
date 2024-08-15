@@ -7,10 +7,13 @@ namespace MyShop.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UserService(UserManager<User> userManager)
+
+    public UserService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task<User> GetUserByIdAsync(string userId)
@@ -28,13 +31,12 @@ public class UserService : IUserService
         return _userManager.Users; // Note: Consider using AsEnumerable() if required
     }
 
-    public async Task CreateUserAsync(User user, string password)
+    public async Task<IdentityResult> CreateUserAsync(User user, string password)
     {
+        // Crée un nouvel utilisateur avec un mot de passe
         var result = await _userManager.CreateAsync(user, password);
-        if (!result.Succeeded)
-        {
-            throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
-        }
+
+        return result; // Retourner le résultat de la création de l'utilisateur
     }
 
     public async Task UpdateUserAsync(User user)
@@ -88,6 +90,30 @@ public class UserService : IUserService
         }
 
         return true;
+    }
+
+    public async Task<IdentityResult> AssignRoleToUserAsync(User user, string roleName)
+    {
+        // Remarque : Ici on travaille sur la table AspNetRoles en base parceque (IdentityRole = AspNetRoles)
+        // Les champs dans IdentityRole sont les mêmes dans AspNetRoles
+        // Donc ici (_roleManager.CreateAsync(new IdentityRole(roleName))) ce code ajoute une ligne dans AspNetRoles
+
+
+        // Vérifiez si le rôle existe
+        if (!await _roleManager.RoleExistsAsync(roleName))
+        {
+            // Créez le rôle s'il n'existe pas
+            var roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!roleResult.Succeeded)
+            {
+                return roleResult; // Retourner les erreurs si la création du rôle échoue
+            }
+        }
+
+        // Assigner le rôle à l'utilisateur
+        var result = await _userManager.AddToRoleAsync(user, roleName);
+
+        return result; // Retourner le résultat de l'assignation
     }
 }
 

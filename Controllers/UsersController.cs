@@ -65,11 +65,30 @@
                     Email = registrationDto.Email
                 };
 
-                await _userService.CreateUserAsync(user, registrationDto.Password);
-                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user); // Return 201 Created
+
+                var result = await _userService.CreateUserAsync(user, registrationDto.Password);
+
+                if (result.Succeeded)
+                {
+                    // Assigner le rôle par défaut à l'utilisateur
+                    var roleResult = await _userService.AssignRoleToUserAsync(user, "User");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        // Gérez l'échec de l'assignation du rôle ici
+                        return BadRequest(roleResult.Errors);
+                    }
+
+                    // Retourner 201 Created
+                    return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+                }
+
+                // Si la création échoue, retourner les erreurs
+                return BadRequest(result.Errors);
             }
             catch (Exception ex)
             {
+                //var message = result;
                 return BadRequest(new { message = ex.Message }); // Return 400 with error message
             }
         }
