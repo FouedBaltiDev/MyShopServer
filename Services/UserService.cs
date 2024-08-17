@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MyShop.Data;
+using MyShop.Dtos;
 using MyShop.Models;
 using System.Net.Mail;
 
@@ -8,12 +11,14 @@ public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly ApplicationDbContext _dbContext;
 
 
-    public UserService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+    public UserService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext dbContext)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _dbContext = dbContext;
     }
 
     public async Task<User> GetUserByIdAsync(string userId)
@@ -26,9 +31,24 @@ public class UserService : IUserService
         return await _userManager.FindByNameAsync(username);
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
-        return _userManager.Users; // Note: Consider using AsEnumerable() if required
+        // Jointure entre (AspNetUsers, AspNetRoles, AspNetUserRoles)
+        // Ici on a fait une jointure car le role existe dans une autre table qui est AspNetRoles et pas dans la table AspNetUsers
+        var usersWithRoles = await (from user in _dbContext.Users
+                                    join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
+                                    join role in _dbContext.Roles on userRole.RoleId equals role.Id
+
+                                    // Le keyword select new on l'appelle projection comme le select sql
+                                    select new UserDto
+                                    {
+                                        Id = user.Id,
+                                        Role = role.Name,
+                                        UserName = user.UserName,
+                                        Email = user.Email
+                                    }).ToListAsync();
+
+        return usersWithRoles;
     }
 
     public async Task<IdentityResult> CreateUserAsync(User user, string password)
@@ -98,6 +118,8 @@ public class UserService : IUserService
         // Les champs dans IdentityRole sont les mêmes dans AspNetRoles
         // Donc ici (_roleManager.CreateAsync(new IdentityRole(roleName))) ce code ajoute une ligne dans AspNetRoles
 
+
+        // équivalent de la table AspNetUsers est la classe c# => IdentityUserRole
 
         // Vérifiez si le rôle existe
         if (!await _roleManager.RoleExistsAsync(roleName))

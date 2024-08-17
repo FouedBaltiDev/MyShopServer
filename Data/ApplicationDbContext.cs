@@ -17,6 +17,9 @@ namespace MyShop.Data
         public DbSet<Product>? Products { get; set; }
         public DbSet<Cart>? Carts { get; set; }
         public DbSet<Delivery>? Deliveries { get; set; }
+        public DbSet<IdentityUserRole<string>> UserRoles { get; set; } // Table AspNetUserRoles
+        public DbSet<IdentityRole> Roles { get; set; } // Table AspNetRoles
+        public DbSet<User> Users { get; set; } // Table AspNetUsers
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,13 +63,16 @@ namespace MyShop.Data
             });
 
 
+            // La suppression en cascade permet de supprimer automatiquement les enregistrements
+            // liés dans les autres tables lorsque vous supprimez un enregistrement parent.
+
             // One-to-One relationship between User and Cart
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Cart)
                 .WithOne(c => c.User)
                 .HasForeignKey<Cart>(c => c.UserId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // One - to - One relationship between Order and Delivery
             modelBuilder.Entity<Order>()

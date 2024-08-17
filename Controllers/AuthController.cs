@@ -29,32 +29,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-
-        //await _emailSender.SendEmailAsync("bacembalti3@gmail.com", "Test Subject", "This is a test email.");
-
-        // test get list Cart done
-        // à virer le mettre dans les services
-        // Linq query
-        var test = _dbContext.Carts.Select(cart => cart.UserId).ToList();
-
-
-        // Jointure Order => OrderItems
-        // Query synatxe
-        var query = (from order in _dbContext.Orders
-                     join orderItem in _dbContext.OrderItems on order.Id equals orderItem.OrderId
-                     select new
-                     {
-                         Id_orderTable = order.Id,
-                         Id_orderItemsTable = orderItem.Id,
-                         orderItem.UnitPrice,
-                     })
-                     .ToList();
-
-        // _userManager et _roleManager deux Classes fourni par le package pour récupérer les users ou roles de la base
-        var users = _userManager.Users.ToList();
-        var roless = _roleManager.Roles.ToList();
-
-
         var user = await _userManager.FindByNameAsync(model.UserName);
 
         //var isCorrectPassword = await _userManager.CheckPasswordAsync(user, model.Password);
