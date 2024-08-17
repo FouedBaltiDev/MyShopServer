@@ -137,5 +137,62 @@ public class UserService : IUserService
 
         return result; // Retourner le résultat de l'assignation
     }
+
+    // Maybe we create a service for role separated to user service
+    public async Task<IdentityResult> UpdateUserRole(string userId, string newRole)
+    {
+        // Récupérer l'utilisateur par ID
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "User not found.", // Vous pouvez définir un code d'erreur personnalisé si nécessaire
+            });
+        }
+
+        // Vérifier si le rôle existe
+        if (!await _roleManager.RoleExistsAsync(newRole))
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "Role does not exist.", // Vous pouvez définir un code d'erreur personnalisé si nécessaire
+            });
+        }
+
+        // Récupérer les rôles actuels de l'utilisateur
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        // Si l'utilisateur a déjà le rôle désiré, rien ne change
+        if (currentRoles.Contains(newRole))
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "User already has the specified role", // Vous pouvez définir un code d'erreur personnalisé si nécessaire
+            });
+        }
+
+        // Supprimer tous les rôles actuels
+        var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        if (!removeResult.Succeeded)
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "Error removing current roles.", // Vous pouvez définir un code d'erreur personnalisé si nécessaire
+            });
+        }
+
+        // Ajouter le nouveau rôle
+        var addResult = await _userManager.AddToRoleAsync(user, newRole);
+        if (!addResult.Succeeded)
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "Error adding new role.", // Vous pouvez définir un code d'erreur personnalisé si nécessaire
+            });
+        }
+
+        return IdentityResult.Success;
+    }
 }
 

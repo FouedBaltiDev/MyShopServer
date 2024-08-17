@@ -1,5 +1,6 @@
 ﻿namespace MyShop.Controllers
 {
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using MyShop.Dtos; // Ajoutez cette ligne pour importer le namespace des DTO
     using MyShop.Models;
@@ -130,6 +131,31 @@
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message }); // Return 400 with error message
+            }
+        }
+
+
+
+        [HttpPost("updateRole")]
+        public async Task<IActionResult> UpdateRole([FromBody] UserRoleUpdateDto updateRoleDto)
+        {
+            if (string.IsNullOrEmpty(updateRoleDto.UserId) || string.IsNullOrEmpty(updateRoleDto.NewRole))
+            {
+                return BadRequest("User ID and new role must be provided.");
+            }
+
+            // Appel de la méthode du service pour mettre à jour le rôle
+            IdentityResult result = await _userService.UpdateUserRole(updateRoleDto.UserId, updateRoleDto.NewRole);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { message = "Role updated successfully." });
+            }
+            else
+            {
+                // Récupérer les messages d'erreur pour les retourner
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return BadRequest(errors);
             }
         }
     }
